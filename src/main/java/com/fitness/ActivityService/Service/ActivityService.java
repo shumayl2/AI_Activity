@@ -1,6 +1,7 @@
     package com.fitness.ActivityService.Service;
 
 
+    import com.fitness.ActivityService.Configuration.WebClientConfig;
     import com.fitness.ActivityService.Entity.Activity;
     import com.fitness.ActivityService.Entity.ActivityRequest;
     import com.fitness.ActivityService.Entity.ActivityResponse;
@@ -20,11 +21,18 @@
         @Autowired
         private ActivityRepo activityRepo;
 
+        @Autowired
+        private UservalidationService uservalidationService;
+
         public ActivityResponse getAllActivity(ActivityRequest request){
             ModelMapper mapper = Mappers.getMapper(ModelMapper.class);
+            Boolean uservalidation = uservalidationService.Uservalidation(request.getUserId());
+            if(!uservalidation){
+                throw new RuntimeException("Invalid user");
+            }
             Activity activity = mapper.mapActivityRequesttoActivity(request);
-            String string = UUID.randomUUID().toString();
-            activity.setId(string);
+//            String string = UUID.randomUUID().toString();
+//            activity.setId(string);
 
 
             Activity save = activityRepo.save(activity);
